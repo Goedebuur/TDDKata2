@@ -10,6 +10,8 @@ namespace StringMaster.UnitTests
     [TestFixture]
     public class ProgramTests
     {
+        private const string _someValue = "1";
+
         private static StringBuilder SetConsoleOutputFake()
         {
             var fakeOutput = new StringBuilder();
@@ -19,10 +21,11 @@ namespace StringMaster.UnitTests
         }
 
         [Test]
-        public void Main_EmptyArgs_CallsTheConsoleWithZero()
+        public void Main_EmptyArgs_CallsConsoleWithZero()
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper("");
 
             //Act
             Program.Main(new[] {""});
@@ -32,26 +35,28 @@ namespace StringMaster.UnitTests
         }
 
         [Test]
-        public void Main_ArgsWithOneNumber_CallsTheConsoleWithSum()
+        public void Main_ArgsWithOneNumber_CallsConsoleWithSum()
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper("1");
 
             //Act
-            Program.Main(new[] { "1" });
+            Program.Main(new[] { "" });
 
             //Assert
             StringAssert.Contains("1", fakeOutput.ToString());
         }
 
         [Test]
-        public void Main_ArgsWithTwoNumbers_CallsTheConsoleWithSum()
+        public void Main_ArgsWithTwoNumbers_CallsConsoleWithSum()
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper("1,2");
 
             //Act
-            Program.Main(new[] { "1,2" });
+            Program.Main(new[] { "" });
 
             //Assert
             StringAssert.Contains("3", fakeOutput.ToString());
@@ -59,16 +64,38 @@ namespace StringMaster.UnitTests
 
         [TestCase("1,2,3", "6")]
         [TestCase("1,2,3,4", "10")]
-        public void Add_StringWithNumbers_Sums(string input, string expected)
+        public void Main_ArgsWithMultipleNumbers_CallsConsoleWithSum(string input, string expected)
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper(input);
 
             //Act
             Program.Main(new[] { input });
 
             //Assert
             StringAssert.Contains(expected, fakeOutput.ToString());
+        }
+
+        [Test]
+        public void Main_UserInputsSomeValue_CallsConsoleWithSum()
+        {
+            //Arrange
+            StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper(_someValue);
+
+            //Act
+            Program.Main(new[] { "" });
+
+
+            //Assert
+            StringAssert.IsMatch("The result is 1", fakeOutput.ToString());
+
+        }
+
+        private static ConsoleWrapperFake ConsoleWrapper(string userInput)
+        {
+            return new ConsoleWrapperFake(userInput);
         }
     }
 }
