@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TDDKata2
+namespace StringMaster
 {
     public class StringCalculator
     {
@@ -15,8 +15,6 @@ namespace TDDKata2
         private string[] _lines;
 
         #endregion
-
-        public static void Main(string[] args) {}
 
         public int Add(string input)
         {
