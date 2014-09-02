@@ -8,8 +8,21 @@ namespace StringMaster
 
         public static void Main(string[] args)
         {
+            if (args.Length == 1)
+            {
+                Console.Write("The result is {0}\n", new StringCalculator().Add(args[0]));
+                return;
+            }
+            
             string input = ConsoleWrapper.ReadLine();
-            Console.Write("The result is {0}", new StringCalculator().Add(input));
+            while (input != string.Empty)
+            {
+                Console.Write("The result is {0}\n", new StringCalculator().Add(input));
+                Console.Write("another input please\n");
+
+                input = ConsoleWrapper.ReadLine();
+            }
+            
         }
     }
 }

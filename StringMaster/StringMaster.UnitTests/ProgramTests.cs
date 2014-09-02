@@ -11,6 +11,7 @@ namespace StringMaster.UnitTests
     public class ProgramTests
     {
         private const string _someValue = "1";
+        private const string _secondSomeValue = "1,2";
 
         private static StringBuilder SetConsoleOutputFake()
         {
@@ -25,7 +26,6 @@ namespace StringMaster.UnitTests
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
-            Program.ConsoleWrapper = ConsoleWrapper("");
 
             //Act
             Program.Main(new[] {""});
@@ -39,10 +39,9 @@ namespace StringMaster.UnitTests
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
-            Program.ConsoleWrapper = ConsoleWrapper("1");
 
             //Act
-            Program.Main(new[] { "" });
+            Program.Main(new[] { "1" });
 
             //Assert
             StringAssert.Contains("1", fakeOutput.ToString());
@@ -53,10 +52,9 @@ namespace StringMaster.UnitTests
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
-            Program.ConsoleWrapper = ConsoleWrapper("1,2");
 
             //Act
-            Program.Main(new[] { "" });
+            Program.Main(new[] { "1,2" });
 
             //Assert
             StringAssert.Contains("3", fakeOutput.ToString());
@@ -68,7 +66,6 @@ namespace StringMaster.UnitTests
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
-            Program.ConsoleWrapper = ConsoleWrapper(input);
 
             //Act
             Program.Main(new[] { input });
@@ -82,18 +79,70 @@ namespace StringMaster.UnitTests
         {
             //Arrange
             StringBuilder fakeOutput = SetConsoleOutputFake();
-            Program.ConsoleWrapper = ConsoleWrapper(_someValue);
+            Program.ConsoleWrapper = ConsoleWrapper(new [] {_someValue, string.Empty});
 
             //Act
-            Program.Main(new[] { "" });
+            Program.Main(new string[] { });
 
 
             //Assert
-            StringAssert.IsMatch("The result is 1", fakeOutput.ToString());
+            StringAssert.Contains("The result is 1", fakeOutput.ToString());
 
         }
 
-        private static ConsoleWrapperFake ConsoleWrapper(string userInput)
+        [Test]
+        public void Main_UserInputsSomeValue_CallsConsoleWithQuestionForNextInput()
+        {
+            //Arrange
+            StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper(new []{_someValue, string.Empty});
+
+            //Act
+            Program.Main(new string[]{});
+
+
+            //Assert
+            StringAssert.Contains("another input please", fakeOutput.ToString());
+
+        }
+
+        [Test]
+        public void Main_UserInputsTwoValues_CallsConsoleWithSums()
+        {
+            //Arrange
+            StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper(new[] { _someValue, _secondSomeValue, string.Empty });
+
+
+            //Act
+            Program.Main(new string[] { });
+
+
+            //Assert
+            StringAssert.Contains("The result is 1", fakeOutput.ToString());
+            StringAssert.Contains("The result is 3", fakeOutput.ToString());
+
+        }
+
+        [Test]
+        public void Main_UserInputsEmptyValue_NoResultOnConsole()
+        {
+            //Arrange
+            StringBuilder fakeOutput = SetConsoleOutputFake();
+            Program.ConsoleWrapper = ConsoleWrapper(new[] { string.Empty });
+
+
+            //Act
+            Program.Main(new string[] { });
+
+
+            //Assert
+            StringAssert.IsMatch(string.Empty, fakeOutput.ToString());
+
+
+        }
+
+        private static ConsoleWrapperFake ConsoleWrapper(string[] userInput)
         {
             return new ConsoleWrapperFake(userInput);
         }
